@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Tic Tac Toe</title>
+
+    <link href="./bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="./styles.css" rel="stylesheet">
+
+    <script src="./bower_components/jquery/dist/jquery.min.js"></script>
+    <script src="./bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+  </head>
+  <body>
+    <div class="container col-xs-12 col-sm-offset-3 col-sm-6 col-md-offset-3 col-md-6 col-lg-offset-3 col-lg-6">
+      <div class="row">
+        <h1 class="title text-center">TicTacToe</h1>
+      </div>
+      <div class="row text-center">
+        <div class="score score-player1">
+          <div class="player">Player 1</div>
+          <div class="text-center">10</div>
+        </div>
+        <div class="score score-player2">
+          <div class="player">Player 2</div>
+          <div class="text-center">8</div>
+        </div>
+        <div class="score score-draw">
+          <div class="player">Draw</div>
+          <div class="text-center">4</div>
+        </div>
+      </div>
+      <div class="row game-container">
+        <div class="game-row col-xs-12 col-sm-12 col-md-12 col-lg-12">
+          <div class="cell cell-border">X</div>
+          <div class="cell cell-border">O</div>
+          <div class="cell">X</div>
+        </div>
+        <div class="game-row col-xs-12 col-sm-12 col-md-12 col-lg-12">
+          <div class="cell cell-border">X</div>
+          <div class="cell cell-border">O</div>
+          <div class="cell">X</div>
+        </div>
+        <div class="game-row-last col-xs-12 col-sm-12 col-md-12 col-lg-12">
+          <div class="cell cell-border">X</div>
+          <div class="cell cell-border">O</div>
+          <div class="cell">X</div>
+        </div>
+      </div>
+      <div class="row">
+        <button type="button" class="btn btn-lg btn-success col-xs-offset-2 col-xs-8 col-sm-offset-2 col-sm-8 col-md-offset-2 col-md-8 col-lg-offset-2 col-lg-8">Restart</button>
+      </div>
+
+    </div>
+  </body>
+</html>

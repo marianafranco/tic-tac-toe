@@ -1,0 +1,22 @@
+{
+  "name": "tic-tac-toe",
+  "description": "A TicTacToe game",
+  "main": "index.js",
+  "authors": [
+    "Mariana Ramos Franco"
+  ],
+  "license": "MIT",
+  "moduleType": [],
+  "homepage": "",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap": "~3.3.6"
+  }
+}
