@@ -11,9 +11,6 @@ h1.title {
     color: #776e65;
 }
 
-/*.container {
-	width: 600px;
-}*/
 .score {
 	display: inline-block;
     font-size: 25px;
@@ -68,4 +65,58 @@ h1.title {
 
 .cell-border {
 	margin-right: 15px;
+}
+
+.new-game {
+	background: #eee4da;
+	border-radius: 3px;
+	padding: 30px;
+}
+
+.form-control {
+	display: inline-block;
+	width: 50%;
+}
+
+.start-btn {
+	margin-top: 15px;
+}
+
+.leaderboard {
+	background: #eee4da;
+	border-radius: 3px;
+	padding: 30px;
+}
+
+table {
+	width: 100%;
+}
+
+thead, tbody, tr, td, th {
+	display: block;
+}
+
+tr:after {
+    content: ' ';
+    display: block;
+    visibility: hidden;
+    clear: both;
+}
+
+thead th {
+    height: 30px;
+}
+
+tbody {
+    height: 150px;
+    overflow-y: auto;
+}
+
+thead {
+    /* fallback */
+}
+
+tbody td, thead th {
+    width: 49%;
+    float: left;
 }
