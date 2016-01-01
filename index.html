@@ -9,85 +9,15 @@
 
     <script src="./bower_components/jquery/dist/jquery.min.js"></script>
     <script src="./bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+
+    <script src="./bower_components/react/react.js"></script>
+    <script src="./bower_components/react/react-dom.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.24/browser.js"></script>
+
+    <script type="text/babel" src="main.js"></script>
   </head>
   <body>
-    <div class="container col-xs-12 col-sm-12 col-md-offset-3 col-md-6 col-lg-offset-3 col-lg-6">
-      <div class="row">
-        <h1 class="title text-center">TicTacToe</h1>
-      </div>
-      <div class="row text-center">
-        <div class="score score-player1">
-          <div class="player">Player 1</div>
-          <div class="text-center">10</div>
-        </div>
-        <div class="score score-player2">
-          <div class="player">Player 2</div>
-          <div class="text-center">8</div>
-        </div>
-        <div class="score score-draw">
-          <div class="player">Draw</div>
-          <div class="text-center">4</div>
-        </div>
-      </div>
-      <div class="row game-container">
-        <!-- <div class="new-game col-xs-12 col-sm-12 col-md-12 col-lg-12">
-          <div class="form-group">
-            <label for="player1">Player 1: </label>
-            <input id="player1" type="text" class="form-control" placeholder="Player 1">
-          </div>
-          <div class="form-group">
-            <label for="player2">Player 2: </label>
-            <input id="player2" type="text" class="form-control" placeholder="Player 2">
-          </div>
-          <button type="button" class="btn btn-lg btn-success start-btn">Start!</button>
-        </div> -->
-        
-        <!-- <div class="leaderboard col-xs-12 col-sm-12 col-md-12 col-lg-12">
-          <table class="table">
-            <thead>
-              <tr>
-                <th class="text-center">Game</th>
-                <th class="text-center">Winner</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>#3</td>
-                <td>Doe</td>
-              </tr>
-              <tr>
-                <td>#2</td>
-                <td>Moe</td>
-              </tr>
-              <tr>
-                <td>#1</td>
-                <td>Draw</td>
-              </tr>
-            </tbody>
-          </table>
-          <button type="button" class="btn btn-lg btn-success start-btn">Back</button>
-        </div> -->
-
-        <div class="game-row col-xs-12 col-sm-12 col-md-12 col-lg-12">
-          <div class="cell cell-border">X</div>
-          <div class="cell cell-border">O</div>
-          <div class="cell">X</div>
-        </div>
-        <div class="game-row col-xs-12 col-sm-12 col-md-12 col-lg-12">
-          <div class="cell cell-border">X</div>
-          <div class="cell cell-border">O</div>
-          <div class="cell">X</div>
-        </div>
-        <div class="game-row-last col-xs-12 col-sm-12 col-md-12 col-lg-12">
-          <div class="cell cell-border">X</div>
-          <div class="cell cell-border">O</div>
-          <div class="cell">X</div>
-        </div>
-      </div>
-      <div class="row">
-        <button type="button" class="btn btn-lg btn-success col-xs-offset-2 col-xs-8 col-sm-offset-2 col-sm-8 col-md-offset-2 col-md-8 col-lg-offset-2 col-lg-8">Restart</button>
-      </div>
-
+    <div id="tictactoe">
     </div>
   </body>
 </html>
