@@ -119,32 +119,48 @@
 		            <input id="player2" type="text" className="form-control" placeholder="Player 2"
 		            	value={this.state.player2} onChange={this.handlePlayer2Change}/>
 		          </div>
-		          <button type="button" className="btn btn-lg btn-success start-btn" onClick={this.handleNewGame}>Start!</button>
+		          <button type="button" className="btn btn-lg btn-primary start-btn" onClick={this.handleNewGame}>Start!</button>
 		        </div>
 				);
 		}
 	});
 
 	var Board = React.createClass({
+		getInitialState: function() {
+			var cells = Array.from({length: 9}, () => '\xA0');
+			return {
+				cells : cells,
+				turn : 'X'		// player 1
+			};
+		},
 		render: function() {
 			return (
 				<div>
 					<div className="game-row col-xs-12 col-sm-12 col-md-12 col-lg-12">
-			          <div className="cell cell-border">X</div>
-			          <div className="cell cell-border">O</div>
-			          <div className="cell">X</div>
+					  <Cell cssClass="cell-border" value={this.state.cells[0]}/>
+					  <Cell cssClass="cell-border" value={this.state.cells[1]}/>
+					  <Cell cssClass="" value={this.state.cells[2]}/>
 			        </div>
 			        <div className="game-row col-xs-12 col-sm-12 col-md-12 col-lg-12">
-			          <div className="cell cell-border">X</div>
-			          <div className="cell cell-border">O</div>
-			          <div className="cell">X</div>
+			          <Cell cssClass="cell-border" value={this.state.cells[3]}/>
+					  <Cell cssClass="cell-border" value={this.state.cells[4]}/>
+					  <Cell cssClass="" value={this.state.cells[5]}/>
 			        </div>
 			        <div className="game-row-last col-xs-12 col-sm-12 col-md-12 col-lg-12">
-			          <div className="cell cell-border">X</div>
-			          <div className="cell cell-border">O</div>
-			          <div className="cell">X</div>
+			          <Cell cssClass="cell-border" value={this.state.cells[6]}/>
+					  <Cell cssClass="cell-border" value={this.state.cells[7]}/>
+					  <Cell cssClass="" value={this.state.cells[8]}/>
 			        </div>
 		        </div>
+				);
+		}
+	});
+
+	var Cell = React.createClass({
+		render: function() {
+			var className = "cell " + this.props.cssClass;
+			return (
+				<div className={className}>{this.props.value}</div>
 				);
 		}
 	});
@@ -154,7 +170,7 @@
 			if (this.props.show) {
 				return (
 				<div className="row">
-			        <button type="button" className="btn btn-lg btn-success col-xs-offset-2 col-xs-8 col-sm-offset-2 col-sm-8 col-md-offset-2 col-md-8 col-lg-offset-2 col-lg-8"
+			        <button type="button" className="btn btn-lg btn-primary col-xs-offset-2 col-xs-8 col-sm-offset-2 col-sm-8 col-md-offset-2 col-md-8 col-lg-offset-2 col-lg-8"
 			        	onClick={this.props.onRestartSubmit}>Restart</button>
 				</div>
 				);

@@ -65,6 +65,14 @@ h1.title {
 	width: 30%;
 }
 
+.cell-player1:hover {
+	background: #47a447;
+}
+
+.cell-player2:hover {
+	background: #d9534f;
+}
+
 .cell-border {
 	margin-right: 15px;
 }
