@@ -1,8 +1,8 @@
 // main.js
-// var React = require('react');
-// var ReactDOM = require('react-dom');
-
 (function(){
+	var React = require('react');
+	var ReactDOM = require('react-dom');
+
 	var TicTacToe = React.createClass({
 		getInitialState: function() {
 			return {
@@ -302,7 +302,7 @@
 
 			var results = this.props.leaderboard.map(function (result, index) {
 				return (
-					<tr>
+					<tr key={index}>
 						<td>#{index + 1}</td>
 		                <td>{result}</td>
 					</tr>

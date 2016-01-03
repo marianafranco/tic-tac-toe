@@ -1,13 +1,448 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 // main.js
-var React = require('react');
-var ReactDOM = require('react-dom');
+(function () {
+	var React = require('react');
+	var ReactDOM = require('react-dom');
 
-ReactDOM.render(React.createElement(
-  'h1',
-  null,
-  'Hello, world!'
-), document.getElementById('example'));
+	var TicTacToe = React.createClass({
+		displayName: 'TicTacToe',
+
+		getInitialState: function () {
+			return {
+				player1: {
+					name: 'Player 1',
+					wins: 0
+				},
+				player2: {
+					name: 'Player 2',
+					wins: 0
+				},
+				draws: 0,
+				leaderboard: [],
+				showLeaderboard: false,
+				newgame: true
+			};
+		},
+		handleNewGameSubmit: function (players) {
+			this.setState({
+				player1: {
+					name: players.player1,
+					wins: 0
+				},
+				player2: {
+					name: players.player2,
+					wins: 0
+				},
+				draws: 0,
+				leaderboard: [],
+				showLeaderboard: false,
+				newgame: false
+			});
+		},
+		handleRestartSubmit: function () {
+			this.setState(this.getInitialState);
+		},
+		handleLeaderboardSubmit: function () {
+			var state = this.state;
+			state.showLeaderboard = true;
+			this.setState(state);
+		},
+		handleBackSubmit: function () {
+			var state = this.state;
+			state.showLeaderboard = false;
+			this.setState(state);
+		},
+		handleGameResult: function (result) {
+			var state = this.state;
+			if (result === 'X') {
+				state.player1.wins += 1;
+				state.leaderboard.push(state.player1.name);
+			} else if (result === 'O') {
+				state.player2.wins += 1;
+				state.leaderboard.push(state.player2.name);
+			} else {
+				state.draws += 1;
+				state.leaderboard.push('Draw');
+			}
+			this.setState(state);
+		},
+		render: function () {
+			var gameContainer;
+
+			if (this.state.newgame) {
+				gameContainer = React.createElement(NewGameForm, { onNewGameSubmit: this.handleNewGameSubmit });
+			} else {
+				gameContainer = React.createElement(Board, { show: !this.state.showLeaderboard,
+					onGameResult: this.handleGameResult });
+			}
+
+			return React.createElement(
+				'div',
+				{ className: 'container col-xs-12 col-sm-12 col-md-offset-3 col-md-6 col-lg-offset-3 col-lg-6' },
+				React.createElement(
+					'div',
+					{ className: 'row' },
+					React.createElement(
+						'h1',
+						{ className: 'title text-center' },
+						'TicTacToe'
+					)
+				),
+				React.createElement(Score, { player1: this.state.player1, player2: this.state.player2, draws: this.state.draws }),
+				React.createElement(
+					'div',
+					{ className: 'row game-container' },
+					gameContainer,
+					React.createElement(Leaderboard, { show: this.state.showLeaderboard, leaderboard: this.state.leaderboard,
+						onBackSubmit: this.handleBackSubmit })
+				),
+				React.createElement(Menu, { show: !this.state.newgame && !this.state.showLeaderboard,
+					onRestartSubmit: this.handleRestartSubmit,
+					onLeaderboarSubmit: this.handleLeaderboardSubmit })
+			);
+		}
+	});
+
+	var Score = React.createClass({
+		displayName: 'Score',
+
+		render: function () {
+			return React.createElement(
+				'div',
+				{ className: 'row text-center' },
+				React.createElement(
+					'div',
+					{ className: 'score score-player1' },
+					React.createElement(
+						'div',
+						{ className: 'player' },
+						this.props.player1.name
+					),
+					React.createElement(
+						'div',
+						{ className: 'text-center' },
+						this.props.player1.wins
+					)
+				),
+				React.createElement(
+					'div',
+					{ className: 'score score-player2' },
+					React.createElement(
+						'div',
+						{ className: 'player' },
+						this.props.player2.name
+					),
+					React.createElement(
+						'div',
+						{ className: 'text-center' },
+						this.props.player2.wins
+					)
+				),
+				React.createElement(
+					'div',
+					{ className: 'score score-draw' },
+					React.createElement(
+						'div',
+						{ className: 'player' },
+						'Draw'
+					),
+					React.createElement(
+						'div',
+						{ className: 'text-center' },
+						this.props.draws
+					)
+				)
+			);
+		}
+	});
+
+	var NewGameForm = React.createClass({
+		displayName: 'NewGameForm',
+
+		getInitialState: function () {
+			return {
+				player1: '',
+				player2: ''
+			};
+		},
+		handlePlayer1Change: function (e) {
+			this.setState({ player1: e.target.value });
+		},
+		handlePlayer2Change: function (e) {
+			this.setState({ player2: e.target.value });
+		},
+		handleNewGame: function (e) {
+			e.preventDefault();
+			var player1 = this.state.player1.trim();
+			var player2 = this.state.player2.trim();
+			if (!player1 || !player2) {
+				return;
+			}
+			this.props.onNewGameSubmit({ player1: player1, player2: player2 });
+			this.setState({ player1: '', player2: '' });
+		},
+		render: function () {
+			return React.createElement(
+				'div',
+				{ className: 'new-game col-xs-12 col-sm-12 col-md-12 col-lg-12' },
+				React.createElement(
+					'div',
+					{ className: 'form-group' },
+					React.createElement(
+						'label',
+						{ htmlFor: 'player1' },
+						'Player 1: '
+					),
+					React.createElement('input', { id: 'player1', type: 'text', className: 'form-control', placeholder: 'Player 1',
+						value: this.state.player1, onChange: this.handlePlayer1Change })
+				),
+				React.createElement(
+					'div',
+					{ className: 'form-group' },
+					React.createElement(
+						'label',
+						{ htmlFor: 'player2' },
+						'Player 2: '
+					),
+					React.createElement('input', { id: 'player2', type: 'text', className: 'form-control', placeholder: 'Player 2',
+						value: this.state.player2, onChange: this.handlePlayer2Change })
+				),
+				React.createElement(
+					'button',
+					{ type: 'button', className: 'btn btn-lg btn-primary start-btn',
+						onClick: this.handleNewGame },
+					'Start!'
+				)
+			);
+		}
+	});
+
+	var Board = React.createClass({
+		displayName: 'Board',
+
+		getInitialState: function () {
+			var cells = Array.from({ length: 9 }, () => '\xA0');
+			return {
+				cells: cells,
+				turn: 'X' // player 1
+			};
+		},
+		checkWinner: function () {
+			var cells = this.state.cells;
+
+			var hasWinner = function (a, b, c) {
+				if (a === 'X' && b === 'X' && c === 'X' || a === 'O' && b === 'O' && c === 'O') {
+					return true;
+				} else {
+					return false;
+				}
+			};
+
+			if (hasWinner(cells[0], cells[1], cells[2])) return cells[0];
+			if (hasWinner(cells[3], cells[4], cells[5])) return cells[3];
+			if (hasWinner(cells[6], cells[7], cells[8])) return cells[6];
+			if (hasWinner(cells[0], cells[3], cells[6])) return cells[0];
+			if (hasWinner(cells[1], cells[4], cells[7])) return cells[1];
+			if (hasWinner(cells[2], cells[5], cells[8])) return cells[2];
+			if (hasWinner(cells[0], cells[4], cells[8])) return cells[0];
+			if (hasWinner(cells[2], cells[4], cells[6])) return cells[2];
+
+			if (cells.indexOf('\xA0') === -1) {
+				return 'draw';
+			}
+
+			return 'continue';
+		},
+		winnerAlert: function (winner) {
+			if (winner === 'X') {
+				alert('Player 1 wins!');
+			} else if (winner === 'O') {
+				alert('Player 2 wins!');
+			} else {
+				alert('Draw!');
+			}
+			this.props.onGameResult(winner);
+			this.setState(this.getInitialState());
+		},
+		handleCellClick: function (position, turn) {
+			var cells = this.state.cells;
+			cells[position] = turn;
+
+			this.setState({ cells: cells, turn: turn === 'X' ? 'O' : 'X' }, function () {
+				var winner = this.checkWinner();
+				if (winner !== 'continue') {
+					this.winnerAlert(winner);
+				}
+			});
+		},
+		render: function () {
+			var css = '';
+			if (!this.props.show) {
+				css = 'hidden';
+			}
+			return React.createElement(
+				'div',
+				{ className: css },
+				React.createElement(
+					'div',
+					{ className: 'game-row col-xs-12 col-sm-12 col-md-12 col-lg-12' },
+					React.createElement(Cell, { cssClass: 'cell-border', value: this.state.cells[0],
+						onCellClick: this.handleCellClick, position: 0, turn: this.state.turn }),
+					React.createElement(Cell, { cssClass: 'cell-border', value: this.state.cells[1],
+						onCellClick: this.handleCellClick, position: 1, turn: this.state.turn }),
+					React.createElement(Cell, { cssClass: '', value: this.state.cells[2],
+						onCellClick: this.handleCellClick, position: 2, turn: this.state.turn })
+				),
+				React.createElement(
+					'div',
+					{ className: 'game-row col-xs-12 col-sm-12 col-md-12 col-lg-12' },
+					React.createElement(Cell, { cssClass: 'cell-border', value: this.state.cells[3],
+						onCellClick: this.handleCellClick, position: 3, turn: this.state.turn }),
+					React.createElement(Cell, { cssClass: 'cell-border', value: this.state.cells[4],
+						onCellClick: this.handleCellClick, position: 4, turn: this.state.turn }),
+					React.createElement(Cell, { cssClass: '', value: this.state.cells[5],
+						onCellClick: this.handleCellClick, position: 5, turn: this.state.turn })
+				),
+				React.createElement(
+					'div',
+					{ className: 'game-row-last col-xs-12 col-sm-12 col-md-12 col-lg-12' },
+					React.createElement(Cell, { cssClass: 'cell-border', value: this.state.cells[6],
+						onCellClick: this.handleCellClick, position: 6, turn: this.state.turn }),
+					React.createElement(Cell, { cssClass: 'cell-border', value: this.state.cells[7],
+						onCellClick: this.handleCellClick, position: 7, turn: this.state.turn }),
+					React.createElement(Cell, { cssClass: '', value: this.state.cells[8],
+						onCellClick: this.handleCellClick, position: 8, turn: this.state.turn })
+				)
+			);
+		}
+	});
+
+	var Cell = React.createClass({
+		displayName: 'Cell',
+
+		cellClick: function () {
+			if (this.props.value === '\xA0') {
+				this.props.onCellClick(this.props.position, this.props.turn);
+			}
+		},
+		render: function () {
+			var className = 'cell ' + this.props.cssClass;
+			if (this.props.value === '\xA0') {
+				if (this.props.turn === 'X') {
+					className = className + ' cell-player1-turn';
+				} else {
+					className = className + ' cell-player2-turn';
+				}
+			} else if (this.props.value === 'X') {
+				className = className + ' cell-player1';
+			} else {
+				className = className + ' cell-player2';
+			}
+
+			return React.createElement(
+				'div',
+				{ className: className, onClick: this.cellClick },
+				this.props.value
+			);
+		}
+	});
+
+	var Menu = React.createClass({
+		displayName: 'Menu',
+
+		render: function () {
+			if (this.props.show) {
+				return React.createElement(
+					'div',
+					{ className: 'row menu' },
+					React.createElement(
+						'button',
+						{ className: 'btn btn-lg btn-primary col-xs-4 col-sm-4 col-md-4 col-lg-4',
+							type: 'button', onClick: this.props.onLeaderboarSubmit },
+						'Leaderboard'
+					),
+					React.createElement(
+						'button',
+						{ className: 'btn btn-lg btn-primary pull-right col-xs-4 col-sm-4 col-md-4 col-lg-4',
+							type: 'button', onClick: this.props.onRestartSubmit },
+						'Restart'
+					)
+				);
+			} else {
+				return React.createElement('div', { className: 'row' });
+			}
+		}
+	});
+
+	var Leaderboard = React.createClass({
+		displayName: 'Leaderboard',
+
+		render: function () {
+			var css = 'leaderboard col-xs-12 col-sm-12 col-md-12 col-lg-12';
+			if (!this.props.show) {
+				css = css + ' hidden';
+			}
+
+			var results = this.props.leaderboard.map(function (result, index) {
+				return React.createElement(
+					'tr',
+					{ key: index },
+					React.createElement(
+						'td',
+						null,
+						'#',
+						index + 1
+					),
+					React.createElement(
+						'td',
+						null,
+						result
+					)
+				);
+			});
+
+			return React.createElement(
+				'div',
+				{ className: css },
+				React.createElement(
+					'table',
+					{ className: 'table' },
+					React.createElement(
+						'thead',
+						null,
+						React.createElement(
+							'tr',
+							null,
+							React.createElement(
+								'th',
+								{ className: 'text-center' },
+								'Game'
+							),
+							React.createElement(
+								'th',
+								{ className: 'text-center' },
+								'Winner'
+							)
+						)
+					),
+					React.createElement(
+						'tbody',
+						null,
+						results
+					)
+				),
+				React.createElement(
+					'button',
+					{ type: 'button', className: 'btn btn-lg btn-primary start-btn',
+						onClick: this.props.onBackSubmit },
+					'Back'
+				)
+			);
+		}
+	});
+
+	ReactDOM.render(React.createElement(TicTacToe, null), document.getElementById('tictactoe'));
+})();
 
 },{"react":158,"react-dom":2}],2:[function(require,module,exports){
 'use strict';
