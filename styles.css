@@ -65,12 +65,20 @@ h1.title {
 	width: 30%;
 }
 
-.cell-player1:hover {
+.cell-player1-turn:hover {
 	background: #47a447;
 }
 
-.cell-player2:hover {
+.cell-player2-turn:hover {
 	background: #d9534f;
+}
+
+.cell-player1 {
+	color: #47a447;
+}
+
+.cell-player2 {
+	color: #d9534f;
 }
 
 .cell-border {

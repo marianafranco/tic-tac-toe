@@ -37,13 +37,24 @@
 		handleRestartSubmit: function(players) {
 		    this.setState(this.getInitialState);
 		},
+		handleGameResult: function(result) {
+			var state = this.state;
+			if (result === 'X') {
+				state.player1.wins += 1; 
+			} else if (result === 'O') {
+				state.player2.wins += 1; 
+			} else {
+				state.draws += 1; 
+			}
+			this.setState(state);
+		},
 	  	render: function() {
 	  		var gameContainer;
 
 			if (this.state.newgame) {
 			  gameContainer = <NewGameForm onNewGameSubmit={this.handleNewGameSubmit}/>;
 			} else {
-			  gameContainer = <Board />;
+			  gameContainer = <Board onGameResult={this.handleGameResult}/>;
 			}
 
 			return (
@@ -133,23 +144,80 @@
 				turn : 'X'		// player 1
 			};
 		},
+		checkWinner: function() {
+			var cells = this.state.cells;
+
+			var hasWinner = function(a, b, c) {
+				if ((a === 'X' && b ==='X' && c === 'X') || (a === 'O' && b ==='O' && c === 'O')) {
+					return true;
+				} else {
+					return false;
+				}
+			};
+
+			if (hasWinner(cells[0], cells[1], cells[2])) return cells[0];
+			if (hasWinner(cells[3], cells[4], cells[5])) return cells[3];
+			if (hasWinner(cells[6], cells[7], cells[8])) return cells[6];
+			if (hasWinner(cells[0], cells[3], cells[6])) return cells[0];
+			if (hasWinner(cells[1], cells[4], cells[7])) return cells[1];
+			if (hasWinner(cells[2], cells[5], cells[8])) return cells[2];
+			if (hasWinner(cells[0], cells[4], cells[8])) return cells[0];
+			if (hasWinner(cells[2], cells[4], cells[6])) return cells[2];
+
+			if (cells.indexOf('\xA0') === -1) {
+				return 'draw';
+			}
+
+			return 'continue';
+		},
+		winnerAlert: function(winner) {
+			if (winner === 'X') {
+				alert('Player 1 wins!');
+			} else if (winner === 'O') {
+				alert('Player 2 wins!');
+			} else {
+				alert('Draw!');
+			}
+			this.props.onGameResult(winner);
+			this.setState(this.getInitialState());
+		},
+		handleCellClick: function(position, turn) {
+			var cells = this.state.cells;
+			cells[position] = turn;
+			
+			this.setState({cells: cells, turn: turn === 'X' ? 'O' : 'X'}, function () {
+				var winner = this.checkWinner();
+				if (winner !==  'continue') {
+					this.winnerAlert(winner);
+				}
+			});
+		},
 		render: function() {
 			return (
 				<div>
 					<div className="game-row col-xs-12 col-sm-12 col-md-12 col-lg-12">
-					  <Cell cssClass="cell-border" value={this.state.cells[0]}/>
-					  <Cell cssClass="cell-border" value={this.state.cells[1]}/>
-					  <Cell cssClass="" value={this.state.cells[2]}/>
+					  <Cell cssClass="cell-border" value={this.state.cells[0]}
+					  		onCellClick={this.handleCellClick} position={0} turn={this.state.turn}/>
+					  <Cell cssClass="cell-border" value={this.state.cells[1]}
+					  		onCellClick={this.handleCellClick} position={1} turn={this.state.turn}/>
+					  <Cell cssClass="" value={this.state.cells[2]}
+					  		onCellClick={this.handleCellClick} position={2} turn={this.state.turn}/>
 			        </div>
 			        <div className="game-row col-xs-12 col-sm-12 col-md-12 col-lg-12">
-			          <Cell cssClass="cell-border" value={this.state.cells[3]}/>
-					  <Cell cssClass="cell-border" value={this.state.cells[4]}/>
-					  <Cell cssClass="" value={this.state.cells[5]}/>
+			          <Cell cssClass="cell-border" value={this.state.cells[3]}
+					  		onCellClick={this.handleCellClick} position={3} turn={this.state.turn}/>
+					  <Cell cssClass="cell-border" value={this.state.cells[4]}
+					  		onCellClick={this.handleCellClick} position={4} turn={this.state.turn}/>
+					  <Cell cssClass="" value={this.state.cells[5]}
+					  		onCellClick={this.handleCellClick} position={5} turn={this.state.turn}/>
 			        </div>
 			        <div className="game-row-last col-xs-12 col-sm-12 col-md-12 col-lg-12">
-			          <Cell cssClass="cell-border" value={this.state.cells[6]}/>
-					  <Cell cssClass="cell-border" value={this.state.cells[7]}/>
-					  <Cell cssClass="" value={this.state.cells[8]}/>
+			          <Cell cssClass="cell-border" value={this.state.cells[6]}
+					  		onCellClick={this.handleCellClick} position={6} turn={this.state.turn}/>
+					  <Cell cssClass="cell-border" value={this.state.cells[7]}
+					  		onCellClick={this.handleCellClick} position={7} turn={this.state.turn}/>
+					  <Cell cssClass="" value={this.state.cells[8]}
+					  		onCellClick={this.handleCellClick} position={8} turn={this.state.turn}/>
 			        </div>
 		        </div>
 				);
@@ -157,10 +225,27 @@
 	});
 
 	var Cell = React.createClass({
+		cellClick: function() {
+			if (this.props.value === '\xA0') {
+				this.props.onCellClick(this.props.position, this.props.turn)
+			}
+		},
 		render: function() {
-			var className = "cell " + this.props.cssClass;
+			var className = 'cell ' + this.props.cssClass;
+			if (this.props.value === '\xA0') {
+				if (this.props.turn === 'X') {
+					className = className + ' cell-player1-turn';
+				} else {
+					className = className + ' cell-player2-turn';
+				}
+			} else if (this.props.value === 'X') {
+				className = className + ' cell-player1';
+			} else {
+				className = className + ' cell-player2';
+			}
+
 			return (
-				<div className={className}>{this.props.value}</div>
+				<div className={className} onClick={this.cellClick}>{this.props.value}</div>
 				);
 		}
 	});
