@@ -16,6 +16,7 @@
 				},
 				draws : 0,
 				leaderboard : [],
+				showLeaderboard : false,
 				newgame : true
 			};
 		},
@@ -31,20 +32,34 @@
 		    	},
 		    	draws : 0,
 		    	leaderboard : [],
+		    	showLeaderboard : false,
 				newgame : false
 		    });
 		},
-		handleRestartSubmit: function(players) {
+		handleRestartSubmit: function() {
 		    this.setState(this.getInitialState);
+		},
+		handleLeaderboardSubmit: function() {
+			var state = this.state;
+			state.showLeaderboard = true;
+			this.setState(state);
+		},
+		handleBackSubmit: function() {
+			var state = this.state;
+			state.showLeaderboard = false;
+			this.setState(state);
 		},
 		handleGameResult: function(result) {
 			var state = this.state;
 			if (result === 'X') {
-				state.player1.wins += 1; 
+				state.player1.wins += 1;
+				state.leaderboard.push(state.player1.name);
 			} else if (result === 'O') {
-				state.player2.wins += 1; 
+				state.player2.wins += 1;
+				state.leaderboard.push(state.player2.name);
 			} else {
-				state.draws += 1; 
+				state.draws += 1;
+				state.leaderboard.push('Draw');
 			}
 			this.setState(state);
 		},
@@ -52,9 +67,10 @@
 	  		var gameContainer;
 
 			if (this.state.newgame) {
-			  gameContainer = <NewGameForm onNewGameSubmit={this.handleNewGameSubmit}/>;
+				gameContainer = <NewGameForm onNewGameSubmit={this.handleNewGameSubmit}/>;
 			} else {
-			  gameContainer = <Board onGameResult={this.handleGameResult}/>;
+				gameContainer = <Board show={!this.state.showLeaderboard}
+										onGameResult={this.handleGameResult}/>;
 			}
 
 			return (
@@ -65,9 +81,12 @@
 					<Score player1={this.state.player1} player2={this.state.player2} draws={this.state.draws}/>
 					<div className="row game-container">
 						{gameContainer}
-						{/*<Leaderboard />*/}
+						<Leaderboard show={this.state.showLeaderboard} leaderboard={this.state.leaderboard}
+							onBackSubmit={this.handleBackSubmit}/>
 					</div>
-					<Restart show={!this.state.newgame} onRestartSubmit={this.handleRestartSubmit}/>
+					<Menu show={!this.state.newgame && !this.state.showLeaderboard}
+						onRestartSubmit={this.handleRestartSubmit}
+						onLeaderboarSubmit={this.handleLeaderboardSubmit}/>
 				</div>
 			);
 	  }
@@ -130,7 +149,8 @@
 		            <input id="player2" type="text" className="form-control" placeholder="Player 2"
 		            	value={this.state.player2} onChange={this.handlePlayer2Change}/>
 		          </div>
-		          <button type="button" className="btn btn-lg btn-primary start-btn" onClick={this.handleNewGame}>Start!</button>
+		          <button type="button" className="btn btn-lg btn-primary start-btn"
+		          		onClick={this.handleNewGame}>Start!</button>
 		        </div>
 				);
 		}
@@ -193,8 +213,12 @@
 			});
 		},
 		render: function() {
+			var css = '';
+			if (!this.props.show) {
+				css = 'hidden';
+			}
 			return (
-				<div>
+				<div className={css}>
 					<div className="game-row col-xs-12 col-sm-12 col-md-12 col-lg-12">
 					  <Cell cssClass="cell-border" value={this.state.cells[0]}
 					  		onCellClick={this.handleCellClick} position={0} turn={this.state.turn}/>
@@ -250,13 +274,15 @@
 		}
 	});
 
-	var Restart = React.createClass({
+	var Menu = React.createClass({
 		render: function() {
 			if (this.props.show) {
 				return (
-				<div className="row">
-			        <button type="button" className="btn btn-lg btn-primary col-xs-offset-2 col-xs-8 col-sm-offset-2 col-sm-8 col-md-offset-2 col-md-8 col-lg-offset-2 col-lg-8"
-			        	onClick={this.props.onRestartSubmit}>Restart</button>
+				<div className="row menu">
+					<button className="btn btn-lg btn-primary col-xs-4 col-sm-4 col-md-4 col-lg-4"
+			        	type="button"  onClick={this.props.onLeaderboarSubmit}>Leaderboard</button>
+					<button className="btn btn-lg btn-primary pull-right col-xs-4 col-sm-4 col-md-4 col-lg-4"
+			        	type="button" onClick={this.props.onRestartSubmit}>Restart</button>
 				</div>
 				);
 			} else {
@@ -268,9 +294,23 @@
 	});
 
 	var Leaderboard = React.createClass({
-		render: function(){
+		render: function() {
+			var css = 'leaderboard col-xs-12 col-sm-12 col-md-12 col-lg-12';
+			if (!this.props.show) {
+				css = css + ' hidden';
+			}
+
+			var results = this.props.leaderboard.map(function (result, index) {
+				return (
+					<tr>
+						<td>#{index + 1}</td>
+		                <td>{result}</td>
+					</tr>
+				);
+			});
+
 			return (
-				<div className="leaderboard col-xs-12 col-sm-12 col-md-12 col-lg-12">
+				<div className={css}>
 		          <table className="table">
 		            <thead>
 		              <tr>
@@ -279,21 +319,11 @@
 		              </tr>
 		            </thead>
 		            <tbody>
-		              <tr>
-		                <td>#3</td>
-		                <td>Doe</td>
-		              </tr>
-		              <tr>
-		                <td>#2</td>
-		                <td>Moe</td>
-		              </tr>
-		              <tr>
-		                <td>#1</td>
-		                <td>Draw</td>
-		              </tr>
+		               {results}
 		            </tbody>
 		          </table>
-		          <button type="button" className="btn btn-lg btn-success start-btn">Back</button>
+		          <button type="button" className="btn btn-lg btn-primary start-btn"
+		          		onClick={this.props.onBackSubmit}>Back</button>
 		        </div>
 				);
 		}

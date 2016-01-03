@@ -100,6 +100,11 @@ h1.title {
 	margin-top: 15px;
 }
 
+.menu {
+	padding-left: 30px;
+	padding-right: 30px;
+}
+
 .leaderboard {
 	background: #eee4da;
 	border-radius: 3px;
@@ -137,4 +142,8 @@ thead {
 tbody td, thead th {
     width: 49%;
     float: left;
+}
+
+.hidden {
+	display:none;
 }
