@@ -65,11 +65,11 @@ h1.title {
 	width: 30%;
 }
 
-.cell-player1-turn:hover {
+.cell-player1-hover:hover {
 	background: #47a447;
 }
 
-.cell-player2-turn:hover {
+.cell-player2-hover:hover {
 	background: #d9534f;
 }
 
@@ -111,6 +111,12 @@ h1.title {
 	padding: 30px;
 }
 
+.hidden {
+	display:none;
+}
+
+/* styles for the table in the Board component */
+
 table {
 	width: 100%;
 }
@@ -142,8 +148,4 @@ thead {
 tbody td, thead th {
     width: 49%;
     float: left;
-}
-
-.hidden {
-	display:none;
 }

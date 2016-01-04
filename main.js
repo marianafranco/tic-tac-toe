@@ -2,6 +2,12 @@
 (function(){
 	var React = require('react');
 	var ReactDOM = require('react-dom');
+	var Modal = require('react-bootstrap').Modal;
+	var Button = require('react-bootstrap').Button;
+
+	var PLAYER1 = 'X';
+	var PLAYER2 = 'O';
+	var EMPTY = '\xA0';
 
 	var TicTacToe = React.createClass({
 		getInitialState: function() {
@@ -51,10 +57,10 @@
 		},
 		handleGameResult: function(result) {
 			var state = this.state;
-			if (result === 'X') {
+			if (result === PLAYER1) {
 				state.player1.wins += 1;
 				state.leaderboard.push(state.player1.name);
-			} else if (result === 'O') {
+			} else if (result === PLAYER2) {
 				state.player2.wins += 1;
 				state.leaderboard.push(state.player2.name);
 			} else {
@@ -158,17 +164,21 @@
 
 	var Board = React.createClass({
 		getInitialState: function() {
-			var cells = Array.from({length: 9}, () => '\xA0');
+			var cells = Array.from({length: 9}, () => EMPTY);
 			return {
 				cells : cells,
-				turn : 'X'		// player 1
+				turn : PLAYER1,
+				showModal: false,
+				modalText: '',
+				winner: ''
 			};
 		},
 		checkWinner: function() {
 			var cells = this.state.cells;
 
 			var hasWinner = function(a, b, c) {
-				if ((a === 'X' && b ==='X' && c === 'X') || (a === 'O' && b ==='O' && c === 'O')) {
+				if ((a === PLAYER1 && b === PLAYER1 && c === PLAYER1) ||
+					(a === PLAYER2 && b === PLAYER2 && c === PLAYER2)) {
 					return true;
 				} else {
 					return false;
@@ -184,33 +194,41 @@
 			if (hasWinner(cells[0], cells[4], cells[8])) return cells[0];
 			if (hasWinner(cells[2], cells[4], cells[6])) return cells[2];
 
-			if (cells.indexOf('\xA0') === -1) {
+			if (cells.indexOf(EMPTY) === -1) {
 				return 'draw';
 			}
 
 			return 'continue';
 		},
-		winnerAlert: function(winner) {
-			if (winner === 'X') {
-				alert('Player 1 wins!');
-			} else if (winner === 'O') {
-				alert('Player 2 wins!');
-			} else {
-				alert('Draw!');
-			}
-			this.props.onGameResult(winner);
-			this.setState(this.getInitialState());
-		},
 		handleCellClick: function(position, turn) {
 			var cells = this.state.cells;
 			cells[position] = turn;
 			
-			this.setState({cells: cells, turn: turn === 'X' ? 'O' : 'X'}, function () {
+			this.setState({cells: cells, turn: turn === PLAYER1 ? PLAYER2 : PLAYER1}, function () {
 				var winner = this.checkWinner();
 				if (winner !==  'continue') {
-					this.winnerAlert(winner);
+					this.showModal(winner);
 				}
 			});
+		},
+		showModal: function(winner) {
+			var state = this.state;
+
+			if (winner === PLAYER1) {
+				state.modalText = 'Player 1 wins!';
+			} else if (winner === PLAYER2) {
+				state.modalText = 'Player 2 wins!';
+			} else {
+				state.modalText = 'Draw!';
+			}
+
+			state.winner = winner;
+			state.showModal = true;
+			this.setState(state);
+		},
+		closeModal: function () {
+			this.props.onGameResult(this.state.winner);
+			this.setState(this.getInitialState());
 		},
 		render: function() {
 			var css = '';
@@ -219,6 +237,14 @@
 			}
 			return (
 				<div className={css}>
+					<Modal show={this.state.showModal} onHide={this.closeModal} bsSize="small">
+					  <Modal.Body>
+					    <h4 className="text-center">{this.state.modalText}</h4>
+					  </Modal.Body>
+					  <Modal.Footer>
+					    <Button className="btn btn-lg btn-primary" onClick={this.closeModal}>Close</Button>
+					  </Modal.Footer>
+					</Modal>
 					<div className="game-row col-xs-12 col-sm-12 col-md-12 col-lg-12">
 					  <Cell cssClass="cell-border" value={this.state.cells[0]}
 					  		onCellClick={this.handleCellClick} position={0} turn={this.state.turn}/>
@@ -250,19 +276,19 @@
 
 	var Cell = React.createClass({
 		cellClick: function() {
-			if (this.props.value === '\xA0') {
+			if (this.props.value === EMPTY) {
 				this.props.onCellClick(this.props.position, this.props.turn)
 			}
 		},
 		render: function() {
 			var className = 'cell ' + this.props.cssClass;
-			if (this.props.value === '\xA0') {
-				if (this.props.turn === 'X') {
-					className = className + ' cell-player1-turn';
+			if (this.props.value === EMPTY) {
+				if (this.props.turn === PLAYER1) {
+					className = className + ' cell-player1-hover';
 				} else {
-					className = className + ' cell-player2-turn';
+					className = className + ' cell-player2-hover';
 				}
-			} else if (this.props.value === 'X') {
+			} else if (this.props.value === PLAYER1) {
 				className = className + ' cell-player1';
 			} else {
 				className = className + ' cell-player2';
