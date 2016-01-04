@@ -2,13 +2,17 @@
 (function(){
 	var React = require('react');
 	var ReactDOM = require('react-dom');
+
+	// importing the react-bootstap's components used in the Modal showed when a game finishes
 	var Modal = require('react-bootstrap').Modal;
 	var Button = require('react-bootstrap').Button;
 
+	// constants
 	var PLAYER1 = 'X';
 	var PLAYER2 = 'O';
 	var EMPTY = '\xA0';
 
+	// the main component
 	var TicTacToe = React.createClass({
 		getInitialState: function() {
 			return {
@@ -21,26 +25,26 @@
 					wins: 0	
 				},
 				draws : 0,
-				leaderboard : [],
+				leaderboard : [],	// list of winners to be shown in the leaderboard
 				showLeaderboard : false,
 				newgame : true
 			};
 		},
 		handleNewGameSubmit: function(players) {
-		    this.setState({
-		    	player1: {
-		    		name: players.player1,
-		    		wins: 0
-		    	},
-		    	player2: {
-		    		name: players.player2,
-		    		wins: 0
-		    	},
-		    	draws : 0,
-		    	leaderboard : [],
-		    	showLeaderboard : false,
+			this.setState({
+				player1: {
+					name: players.player1,
+					wins: 0
+				},
+				player2: {
+					name: players.player2,
+					wins: 0
+				},
+				draws : 0,
+				leaderboard : [],
+				showLeaderboard : false,
 				newgame : false
-		    });
+			});
 		},
 		handleRestartSubmit: function() {
 		    this.setState(this.getInitialState);
@@ -50,11 +54,15 @@
 			state.showLeaderboard = true;
 			this.setState(state);
 		},
+		// actions to be taken by the Leaderboard's Back button
 		handleBackSubmit: function() {
 			var state = this.state;
 			state.showLeaderboard = false;
 			this.setState(state);
 		},
+		// actions to be taken when a game finishes:
+		// - update the players score
+		// - include the game's result in the leaderboard list
 		handleGameResult: function(result) {
 			var state = this.state;
 			if (result === PLAYER1) {
@@ -69,14 +77,27 @@
 			}
 			this.setState(state);
 		},
+		// the TicTacToe component is formed by:
+		// - a title
+		// - Score component
+		// - (NewGameForm || Board + Leaderboard) components
+		// - Menu component
 	  	render: function() {
 	  		var gameContainer;
 
+
 			if (this.state.newgame) {
-				gameContainer = <NewGameForm onNewGameSubmit={this.handleNewGameSubmit}/>;
+				gameContainer = <div className="row game-container">
+									<NewGameForm onNewGameSubmit={this.handleNewGameSubmit}/>
+								</div>;
 			} else {
-				gameContainer = <Board show={!this.state.showLeaderboard}
-										onGameResult={this.handleGameResult}/>;
+				gameContainer = <div className="row game-container">
+									<Board show={!this.state.showLeaderboard}
+										onGameResult={this.handleGameResult}/>
+									<Leaderboard show={this.state.showLeaderboard}
+										leaderboard={this.state.leaderboard}
+										onBackSubmit={this.handleBackSubmit}/>
+								</div>;
 			}
 
 			return (
@@ -85,11 +106,9 @@
 			        	<h1 className="title text-center">TicTacToe</h1>
 			      	</div>
 					<Score player1={this.state.player1} player2={this.state.player2} draws={this.state.draws}/>
-					<div className="row game-container">
-						{gameContainer}
-						<Leaderboard show={this.state.showLeaderboard} leaderboard={this.state.leaderboard}
-							onBackSubmit={this.handleBackSubmit}/>
-					</div>
+					
+					{gameContainer}
+					
 					<Menu show={!this.state.newgame && !this.state.showLeaderboard}
 						onRestartSubmit={this.handleRestartSubmit}
 						onLeaderboarSubmit={this.handleLeaderboardSubmit}/>
@@ -98,6 +117,7 @@
 	  }
 	});
 
+	// the players' score shown above the Board
 	var Score = React.createClass({
 		render: function() {
 		    return (
@@ -119,6 +139,7 @@
 	  }
 	});
 
+	// form used to get the players name
 	var NewGameForm =  React.createClass({
 		getInitialState: function() {
 			return {
@@ -136,7 +157,7 @@
 			e.preventDefault();
 			var player1 = this.state.player1.trim();
 		    var player2 = this.state.player2.trim();
-		    if (!player1 || !player2) {
+		    if (!player1 || !player2) {		// no action is taken if the names are empty
 		      return;
 		    }
 		    this.props.onNewGameSubmit({player1: player1, player2: player2});
@@ -274,6 +295,7 @@
 		}
 	});
 
+	// a cell of the game Board
 	var Cell = React.createClass({
 		cellClick: function() {
 			if (this.props.value === EMPTY) {
@@ -281,6 +303,7 @@
 			}
 		},
 		render: function() {
+			// setting the div class according to the player's turn and cell value
 			var className = 'cell ' + this.props.cssClass;
 			if (this.props.value === EMPTY) {
 				if (this.props.turn === PLAYER1) {
@@ -300,6 +323,7 @@
 		}
 	});
 
+	// Leaderboard and Restart buttons
 	var Menu = React.createClass({
 		render: function() {
 			if (this.props.show) {
@@ -319,6 +343,7 @@
 		}
 	});
 
+	// table with all game results
 	var Leaderboard = React.createClass({
 		render: function() {
 			var css = 'leaderboard col-xs-12 col-sm-12 col-md-12 col-lg-12';
