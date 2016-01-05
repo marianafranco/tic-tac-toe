@@ -1,5 +1,5 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-// main.js
+
 (function () {
 	var React = require('react');
 	var ReactDOM = require('react-dom');
@@ -244,6 +244,7 @@
 		}
 	});
 
+	// the game board
 	var Board = React.createClass({
 		displayName: 'Board',
 
@@ -268,6 +269,7 @@
 				}
 			};
 
+			// checking all possible combinations (rows, columns and diagonals)
 			if (hasWinner(cells[0], cells[1], cells[2])) return cells[0];
 			if (hasWinner(cells[3], cells[4], cells[5])) return cells[3];
 			if (hasWinner(cells[6], cells[7], cells[8])) return cells[6];
@@ -287,6 +289,7 @@
 			var cells = this.state.cells;
 			cells[position] = turn;
 
+			// updates the board and then check for a winner
 			this.setState({ cells: cells, turn: turn === PLAYER1 ? PLAYER2 : PLAYER1 }, function () {
 				var winner = this.checkWinner();
 				if (winner !== 'continue') {
@@ -309,6 +312,8 @@
 			state.showModal = true;
 			this.setState(state);
 		},
+		// closes the modal and calls the method to update the players score
+		// and leaderboad before restart the board state
 		closeModal: function () {
 			this.props.onGameResult(this.state.winner);
 			this.setState(this.getInitialState());
@@ -318,6 +323,15 @@
 			if (!this.props.show) {
 				css = 'hidden';
 			}
+
+			// building the array of cells for the Board
+			var state = this.state;
+			var handleCellClick = this.handleCellClick;
+			var cells = state.cells.map(function (cell, index) {
+				return React.createElement(Cell, { key: index, value: cell, onCellClick: handleCellClick,
+					position: index, turn: state.turn });
+			});
+
 			return React.createElement(
 				'div',
 				{ className: css },
@@ -346,32 +360,17 @@
 				React.createElement(
 					'div',
 					{ className: 'game-row col-xs-12 col-sm-12 col-md-12 col-lg-12' },
-					React.createElement(Cell, { cssClass: 'cell-border', value: this.state.cells[0],
-						onCellClick: this.handleCellClick, position: 0, turn: this.state.turn }),
-					React.createElement(Cell, { cssClass: 'cell-border', value: this.state.cells[1],
-						onCellClick: this.handleCellClick, position: 1, turn: this.state.turn }),
-					React.createElement(Cell, { cssClass: '', value: this.state.cells[2],
-						onCellClick: this.handleCellClick, position: 2, turn: this.state.turn })
+					cells.slice(0, 3)
 				),
 				React.createElement(
 					'div',
 					{ className: 'game-row col-xs-12 col-sm-12 col-md-12 col-lg-12' },
-					React.createElement(Cell, { cssClass: 'cell-border', value: this.state.cells[3],
-						onCellClick: this.handleCellClick, position: 3, turn: this.state.turn }),
-					React.createElement(Cell, { cssClass: 'cell-border', value: this.state.cells[4],
-						onCellClick: this.handleCellClick, position: 4, turn: this.state.turn }),
-					React.createElement(Cell, { cssClass: '', value: this.state.cells[5],
-						onCellClick: this.handleCellClick, position: 5, turn: this.state.turn })
+					cells.slice(3, 6)
 				),
 				React.createElement(
 					'div',
 					{ className: 'game-row-last col-xs-12 col-sm-12 col-md-12 col-lg-12' },
-					React.createElement(Cell, { cssClass: 'cell-border', value: this.state.cells[6],
-						onCellClick: this.handleCellClick, position: 6, turn: this.state.turn }),
-					React.createElement(Cell, { cssClass: 'cell-border', value: this.state.cells[7],
-						onCellClick: this.handleCellClick, position: 7, turn: this.state.turn }),
-					React.createElement(Cell, { cssClass: '', value: this.state.cells[8],
-						onCellClick: this.handleCellClick, position: 8, turn: this.state.turn })
+					cells.slice(6)
 				)
 			);
 		}
@@ -388,7 +387,7 @@
 		},
 		render: function () {
 			// setting the div class according to the player's turn and cell value
-			var className = 'cell ' + this.props.cssClass;
+			var className = 'cell ' + ([2, 5, 8].indexOf(this.props.position) > -1 ? '' : 'cell-border');
 			if (this.props.value === EMPTY) {
 				if (this.props.turn === PLAYER1) {
 					className = className + ' cell-player1-hover';
