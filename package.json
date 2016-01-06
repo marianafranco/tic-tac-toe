@@ -8,11 +8,12 @@
   },
   "author": "Mariana Ramos Franco",
   "license": "MIT",
-  "dependencies": {
+  "devDependencies": {
     "babel-preset-react": "^6.3.13",
     "babelify": "^7.2.0",
     "react": "^0.14.5",
     "react-bootstrap": "^0.28.1",
-    "react-dom": "^0.14.3"
+    "react-dom": "^0.14.3",
+    "watchify": "^3.6.1"
   }
 }
