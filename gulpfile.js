@@ -5,7 +5,7 @@ var babelify = require('babelify');
 var watchify = require('watchify');
 
 gulp.task('build', function () {
-   var b =  browserify('main.js', watchify.args)
+   var b =  browserify('./src/main.js', watchify.args)
 			.plugin(watchify)
 			.transform(babelify, {presets: ["react"]});
 

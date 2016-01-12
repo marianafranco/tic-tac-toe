@@ -1,7 +1,7 @@
-// main.js
+// tictactoe.js
 (function(){
+
 	var React = require('react');
-	var ReactDOM = require('react-dom');
 
 	// importing the react-bootstap's components used in the Modal showed when a game finishes
 	var Modal = require('react-bootstrap').Modal;
@@ -385,9 +385,6 @@
 		}
 	});
 
-	ReactDOM.render(
-	  <TicTacToe />,
-	  document.getElementById('tictactoe')
-	);
+	module.exports = TicTacToe;
 
 })();
