@@ -47,7 +47,7 @@
 			});
 		},
 		handleRestartSubmit: function() {
-		    this.setState(this.getInitialState);
+		    this.setState(this.getInitialState());
 		},
 		handleLeaderboardSubmit: function() {
 			var state = this.state;
@@ -199,12 +199,8 @@
 			var cells = this.state.cells;
 
 			var hasWinner = function(a, b, c) {
-				if ((a === PLAYER1 && b === PLAYER1 && c === PLAYER1) ||
-					(a === PLAYER2 && b === PLAYER2 && c === PLAYER2)) {
-					return true;
-				} else {
-					return false;
-				}
+				return ((a === PLAYER1 && b === PLAYER1 && c === PLAYER1) ||
+					(a === PLAYER2 && b === PLAYER2 && c === PLAYER2));
 			};
 
 			// checking all possible combinations (rows, columns and diagonals)

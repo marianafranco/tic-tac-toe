@@ -34833,8 +34833,6 @@ module.exports = warning;
 module.exports = require('./lib/React');
 
 },{"./lib/React":269}],402:[function(require,module,exports){
-'use strict';
-
 // main.js
 (function () {
 
@@ -34846,7 +34844,6 @@ module.exports = require('./lib/React');
 })();
 
 },{"./tictactoe.js":403,"react":401,"react-dom":245}],403:[function(require,module,exports){
-'use strict';
 
 (function () {
 
@@ -34865,7 +34862,7 @@ module.exports = require('./lib/React');
 	var TicTacToe = React.createClass({
 		displayName: 'TicTacToe',
 
-		getInitialState: function getInitialState() {
+		getInitialState: function () {
 			return {
 				player1: {
 					name: 'Player 1',
@@ -34881,7 +34878,7 @@ module.exports = require('./lib/React');
 				newgame: true
 			};
 		},
-		handleNewGameSubmit: function handleNewGameSubmit(players) {
+		handleNewGameSubmit: function (players) {
 			this.setState({
 				player1: {
 					name: players.player1,
@@ -34897,16 +34894,16 @@ module.exports = require('./lib/React');
 				newgame: false
 			});
 		},
-		handleRestartSubmit: function handleRestartSubmit() {
-			this.setState(this.getInitialState);
+		handleRestartSubmit: function () {
+			this.setState(this.getInitialState());
 		},
-		handleLeaderboardSubmit: function handleLeaderboardSubmit() {
+		handleLeaderboardSubmit: function () {
 			var state = this.state;
 			state.showLeaderboard = true;
 			this.setState(state);
 		},
 		// actions to be taken by the Leaderboard's Back button
-		handleBackSubmit: function handleBackSubmit() {
+		handleBackSubmit: function () {
 			var state = this.state;
 			state.showLeaderboard = false;
 			this.setState(state);
@@ -34914,7 +34911,7 @@ module.exports = require('./lib/React');
 		// actions to be taken when a game finishes:
 		// - update the players score
 		// - include the game's result in the leaderboard list
-		handleGameResult: function handleGameResult(result) {
+		handleGameResult: function (result) {
 			var state = this.state;
 			if (result === PLAYER1) {
 				state.player1.wins += 1;
@@ -34933,7 +34930,7 @@ module.exports = require('./lib/React');
 		// - Score component
 		// - (NewGameForm || Board + Leaderboard) components
 		// - Menu component
-		render: function render() {
+		render: function () {
 			var gameContainer;
 
 			if (this.state.newgame) {
@@ -34979,7 +34976,7 @@ module.exports = require('./lib/React');
 	var Score = React.createClass({
 		displayName: 'Score',
 
-		render: function render() {
+		render: function () {
 			return React.createElement(
 				'div',
 				{ className: 'row text-center' },
@@ -35033,19 +35030,19 @@ module.exports = require('./lib/React');
 	var NewGameForm = React.createClass({
 		displayName: 'NewGameForm',
 
-		getInitialState: function getInitialState() {
+		getInitialState: function () {
 			return {
 				player1: '',
 				player2: ''
 			};
 		},
-		handlePlayer1Change: function handlePlayer1Change(e) {
+		handlePlayer1Change: function (e) {
 			this.setState({ player1: e.target.value });
 		},
-		handlePlayer2Change: function handlePlayer2Change(e) {
+		handlePlayer2Change: function (e) {
 			this.setState({ player2: e.target.value });
 		},
-		handleNewGame: function handleNewGame(e) {
+		handleNewGame: function (e) {
 			e.preventDefault();
 			var player1 = this.state.player1.trim();
 			var player2 = this.state.player2.trim();
@@ -35056,7 +35053,7 @@ module.exports = require('./lib/React');
 			this.props.onNewGameSubmit({ player1: player1, player2: player2 });
 			this.setState({ player1: '', player2: '' });
 		},
-		render: function render() {
+		render: function () {
 			return React.createElement(
 				'div',
 				{ className: 'new-game col-xs-12 col-sm-12 col-md-12 col-lg-12' },
@@ -35096,10 +35093,8 @@ module.exports = require('./lib/React');
 	var Board = React.createClass({
 		displayName: 'Board',
 
-		getInitialState: function getInitialState() {
-			var cells = Array.from({ length: 9 }, function () {
-				return EMPTY;
-			});
+		getInitialState: function () {
+			var cells = Array.from({ length: 9 }, () => EMPTY);
 			return {
 				cells: cells,
 				turn: PLAYER1,
@@ -35108,15 +35103,11 @@ module.exports = require('./lib/React');
 				winner: ''
 			};
 		},
-		checkWinner: function checkWinner() {
+		checkWinner: function () {
 			var cells = this.state.cells;
 
-			var hasWinner = function hasWinner(a, b, c) {
-				if (a === PLAYER1 && b === PLAYER1 && c === PLAYER1 || a === PLAYER2 && b === PLAYER2 && c === PLAYER2) {
-					return true;
-				} else {
-					return false;
-				}
+			var hasWinner = function (a, b, c) {
+				return a === PLAYER1 && b === PLAYER1 && c === PLAYER1 || a === PLAYER2 && b === PLAYER2 && c === PLAYER2;
 			};
 
 			// checking all possible combinations (rows, columns and diagonals)
@@ -35135,7 +35126,7 @@ module.exports = require('./lib/React');
 
 			return 'continue';
 		},
-		handleCellClick: function handleCellClick(position, turn) {
+		handleCellClick: function (position, turn) {
 			var cells = this.state.cells;
 			cells[position] = turn;
 
@@ -35147,7 +35138,7 @@ module.exports = require('./lib/React');
 				}
 			});
 		},
-		showModal: function showModal(winner) {
+		showModal: function (winner) {
 			var state = this.state;
 
 			if (winner === PLAYER1) {
@@ -35164,11 +35155,11 @@ module.exports = require('./lib/React');
 		},
 		// closes the modal and calls the method to update the players score
 		// and leaderboad before restart the board state
-		closeModal: function closeModal() {
+		closeModal: function () {
 			this.props.onGameResult(this.state.winner);
 			this.setState(this.getInitialState());
 		},
-		render: function render() {
+		render: function () {
 			var css = '';
 			if (!this.props.show) {
 				css = 'hidden';
@@ -35230,12 +35221,12 @@ module.exports = require('./lib/React');
 	var Cell = React.createClass({
 		displayName: 'Cell',
 
-		cellClick: function cellClick() {
+		cellClick: function () {
 			if (this.props.value === EMPTY) {
 				this.props.onCellClick(this.props.position, this.props.turn);
 			}
 		},
-		render: function render() {
+		render: function () {
 			// setting the div class according to the player's turn and cell value
 			var className = 'cell ' + ([2, 5, 8].indexOf(this.props.position) > -1 ? '' : 'cell-border');
 			if (this.props.value === EMPTY) {
@@ -35262,7 +35253,7 @@ module.exports = require('./lib/React');
 	var Menu = React.createClass({
 		displayName: 'Menu',
 
-		render: function render() {
+		render: function () {
 			if (this.props.show) {
 				return React.createElement(
 					'div',
@@ -35290,7 +35281,7 @@ module.exports = require('./lib/React');
 	var Leaderboard = React.createClass({
 		displayName: 'Leaderboard',
 
-		render: function render() {
+		render: function () {
 			var css = 'leaderboard col-xs-12 col-sm-12 col-md-12 col-lg-12';
 			if (!this.props.show) {
 				css = css + ' hidden';
